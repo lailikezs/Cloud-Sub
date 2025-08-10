@@ -630,34 +630,26 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							padding: 8px 12px;
 							display: block;
 						}
-						.sub-item {
-							position: relative;
-						}
-						.qr-container {
-							position: absolute;
-							left: 200px;  /* 向右偏移 */
-							top: 0;
-							margin: 0;
-							padding: 12px;
-							background: #fff;
-							border-radius: 6px;
-							display: none;
+						.sub-item a span {
+							color: #333; /* 描述文字改为黑色 */
 						}
 						.notice-toggle {
 							display: inline-block;
 							margin: 16px 12px;
-							padding: 6px 12px;
-							color: #2196F3;
-							background: #f1f8ff;
-							border: 1px solid #e1f2ff;
+							padding: 6px 16px;
+							color: #fff;
+							background: #2196F3;
+							border: none;
 							border-radius: 4px;
 							text-decoration: none;
 							font-size: 14px;
 							cursor: pointer;
 							transition: all 0.2s ease;
+							box-shadow: 0 2px 4px rgba(33,150,243,0.2);
 						}
 						.notice-toggle:hover {
-							background: #e1f2ff;
+							background: #1976D2;
+							box-shadow: 0 4px 8px rgba(33,150,243,0.3);
 						}
 					</style>
 				</head>
@@ -670,42 +662,42 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							</h2>
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?sub', 'qrcode_0')">
-									自适应订阅地址: https://${url.hostname}/${mytoken}?sub
+									<span>自适应订阅地址:</span> https://${url.hostname}/${mytoken}?sub
 								</a>
 								<div id="qrcode_0" class="qr-container"></div>
 							</div>
 							
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?b64', 'qrcode_1')">
-									Base64订阅地址: https://${url.hostname}/${mytoken}?b64
+									<span>Base64订阅地址:</span> https://${url.hostname}/${mytoken}?b64
 								</a>
 								<div id="qrcode_1" class="qr-container"></div>
 							</div>
 
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?clash', 'qrcode_2')">
-									clash订阅地址: https://${url.hostname}/${mytoken}?clash
+									<span>clash订阅地址:</span> https://${url.hostname}/${mytoken}?clash
 								</a>
 								<div id="qrcode_2" class="qr-container"></div>
 							</div>
 
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?sb', 'qrcode_3')">
-									singbox订阅地址: https://${url.hostname}/${mytoken}?sb
+									<span>singbox订阅地址:</span> https://${url.hostname}/${mytoken}?sb
 								</a>
 								<div id="qrcode_3" class="qr-container"></div>
 							</div>
 
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?surge', 'qrcode_4')">
-									surge订阅地址: https://${url.hostname}/${mytoken}?surge
+									<span>surge订阅地址:</span> https://${url.hostname}/${mytoken}?surge
 								</a>
 								<div id="qrcode_4" class="qr-container"></div>
 							</div>
 							
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?loon', 'qrcode_5')">
-									loon订阅地址: https://${url.hostname}/${mytoken}?loon
+									<span>loon订阅地址:</span> https://${url.hostname}/${mytoken}?loon
 								</a>
 								<div id="qrcode_5" class="qr-container"></div>
 							</div>
