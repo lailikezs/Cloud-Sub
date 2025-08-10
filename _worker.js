@@ -599,7 +599,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							text-decoration: none;
 						}
 						.sub-item a {
-							color: #333;
+							color: #2196F3;
 							text-decoration: none;
 							padding: 8px 12px;
 							display: block;
