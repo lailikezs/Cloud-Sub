@@ -605,6 +605,31 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							display: block;
 							position: relative;
 						}
+						.qr-container {
+							margin: 12px 0 12px 12px; /* 左侧对齐 */
+							padding: 12px;
+							background: #fff;
+							border-radius: 6px;
+							display: none;
+						}
+						.notice-toggle {
+							display: inline-block;
+							margin: 12px 0;
+							padding: 8px 16px;
+							color: #FF9800;
+							background: #fff3e0;
+							border-radius: 20px;
+							cursor: pointer;
+							transition: all 0.2s ease;
+							text-decoration: none;
+							font-size: 14px;
+							font-weight: 500;
+							box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+						}
+						.notice-toggle:hover {
+							background: #ffe0b2;
+							box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+						}
 						.editor {
 							width: 760px;
 							height: 300px;
@@ -614,6 +639,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							border-radius: 8px;
 							font-family: monospace;
 							display: block;
+							resize: none; /* 禁止拉伸 */
 						}
 						.copy-success {
 							position: fixed;
