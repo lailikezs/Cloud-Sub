@@ -624,6 +624,21 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							transition: opacity 0.3s;
 							z-index: 1000;
 						}
+						.sub-item a {
+							color: #2196F3;
+							text-decoration: none;
+							padding: 8px 12px;
+							display: block;
+						}
+						.notice-toggle {
+							display: block;
+							margin: 12px 0;
+							padding: 8px 16px;
+							color: #2196F3;
+							text-decoration: none;
+							font-size: 14px;
+							cursor: pointer;
+						}
 					</style>
 				</head>
 				<body>
