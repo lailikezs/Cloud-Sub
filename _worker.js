@@ -611,50 +611,23 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							padding: 12px;
 							background: #fff;
 							border-radius: 6px;
+							display: none;  /* 默认隐藏二维码 */
 						}
-						.divider {
-							margin: 24px 0;
-							border: none;
-							border-top: 1px solid #eee;
-						}
-						.notice-toggle {
-							display: inline-block;
-							margin: 12px 0;
-							padding: 8px 16px;
-							color: #FF9800;
-							background: #fff3e0;
-							border-radius: 20px;
-							cursor: pointer;
-							transition: all 0.2s ease;
-						}
-						.notice-toggle:hover {
-							background: #ffe0b2;
-						}
-						.editor {
-							width: 100%;
-							min-height: 300px;
-							margin: 12px 0;
-							padding: 16px;
-							border: 1px solid #e0e0e0;
+						.sub-item {
+							margin-bottom: 15px;
+							padding: 10px;
+							background: #f8f9fa;
 							border-radius: 8px;
-							font-family: monospace;
-							resize: vertical;
 						}
-						.save-btn {
-							padding: 8px 20px;
-							color: #fff;
-							background: #4CAF50;
-							border: none;
+						.sub-item a {
+							color: #2196F3;
+							text-decoration: none;
+							padding: 8px 12px;
+							display: block;
+						}
+						.sub-item a:hover {
+							background: #e3f2fd;
 							border-radius: 4px;
-							cursor: pointer;
-							transition: all 0.2s ease;
-						}
-						.save-btn:hover {
-							background: #43A047;
-						}
-						.status {
-							margin-left: 12px;
-							color: #666;
 						}
 					</style>
 				</head>
@@ -662,46 +635,46 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					<div class="container">
 						<div class="section">
 							<h2 class="section-title">订阅地址</h2>
-							<p>点击链接自动 <strong>复制订阅链接</strong> 并 <strong>生成订阅二维码</strong></p>
+							<p>点击链接复制地址并显示二维码，再次点击隐藏二维码</p>
 							
-							<div class="sub-section">
-								<a class="sub-link" href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/${mytoken}?sub','qrcode_0')">
-									自适应订阅地址
+							<div class="sub-item">
+								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?sub', 'qrcode_0')">
+									自适应订阅地址: https://${url.hostname}/${mytoken}?sub
 								</a>
 								<div id="qrcode_0" class="qr-container"></div>
 							</div>
 							
-							<div class="sub-section">
-								<a class="sub-link" href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/${mytoken}?b64','qrcode_1')">
-									Base64订阅地址
+							<div class="sub-item">
+								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?b64', 'qrcode_1')">
+									Base64订阅地址: https://${url.hostname}/${mytoken}?b64
 								</a>
 								<div id="qrcode_1" class="qr-container"></div>
 							</div>
-							
-							<div class="sub-section">
-								<a class="sub-link" href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/${mytoken}?clash','qrcode_2')">
-									clash订阅地址
+
+							<div class="sub-item">
+								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?clash', 'qrcode_2')">
+									clash订阅地址: https://${url.hostname}/${mytoken}?clash
 								</a>
 								<div id="qrcode_2" class="qr-container"></div>
 							</div>
-							
-							<div class="sub-section">
-								<a class="sub-link" href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/${mytoken}?sb','qrcode_3')">
-									singbox订阅地址
+
+							<div class="sub-item">
+								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?sb', 'qrcode_3')">
+									singbox订阅地址: https://${url.hostname}/${mytoken}?sb
 								</a>
 								<div id="qrcode_3" class="qr-container"></div>
 							</div>
-							
-							<div class="sub-section">
-								<a class="sub-link" href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/${mytoken}?surge','qrcode_4')">
-									surge订阅地址
+
+							<div class="sub-item">
+								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?surge', 'qrcode_4')">
+									surge订阅地址: https://${url.hostname}/${mytoken}?surge
 								</a>
 								<div id="qrcode_4" class="qr-container"></div>
 							</div>
 							
-							<div class="sub-section">
-								<a class="sub-link" href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/${mytoken}?loon','qrcode_5')">
-									loon订阅地址
+							<div class="sub-item">
+								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?loon', 'qrcode_5')">
+									loon订阅地址: https://${url.hostname}/${mytoken}?loon
 								</a>
 								<div id="qrcode_5" class="qr-container"></div>
 							</div>
@@ -754,7 +727,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						</div>
 					</div>
 					<script>
-					function copyToClipboard(text, qrcode) {
+					function handleSubscription(text, qrcodeId) {
 						// 复制到剪贴板
 						const textarea = document.createElement('textarea');
 						textarea.value = text;
@@ -768,18 +741,24 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						}
 						document.body.removeChild(textarea);
 						
-						// 生成二维码
-						const qrcodeDiv = document.getElementById(qrcode);
-						if(qrcodeDiv) {
-							qrcodeDiv.innerHTML = '';
-							new QRCode(qrcodeDiv, {
-								text: text,
-								width: 220,
-								height: 220,
-								colorDark: "#000000",
-								colorLight: "#ffffff",
-								correctLevel: QRCode.CorrectLevel.H
-							});
+						// 切换二维码显示/隐藏
+						const qrcodeDiv = document.getElementById(qrcodeId);
+						if (qrcodeDiv) {
+							if (qrcodeDiv.style.display === 'none' || qrcodeDiv.style.display === '') {
+								qrcodeDiv.style.display = 'block';
+								if (!qrcodeDiv.hasChildNodes()) {
+									new QRCode(qrcodeDiv, {
+										text: text,
+										width: 220,
+										height: 220,
+										colorDark: "#000000",
+										colorLight: "#ffffff",
+										correctLevel: QRCode.CorrectLevel.H
+									});
+								}
+							} else {
+								qrcodeDiv.style.display = 'none';
+							}
 						}
 					}
 						
