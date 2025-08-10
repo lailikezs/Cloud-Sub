@@ -616,7 +616,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						}
 						.editor {
 							width: 100%;
-							min-height: 300px;
+							height: 300px;
 							margin: 12px 0;
 							padding: 16px;
 							border: 1px solid #e0e0e0;
@@ -694,35 +694,54 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							</a>
 							
 							<div id="noticeContent" class="notice-content" style="display:none">
-								---------------------------------------------------------------<br>
-								访客订阅只能使用订阅功能，无法查看配置页！<br>
-								GUEST（访客订阅TOKEN）: <strong>${guest}</strong><br>
-								---------------------------------------------------------------<br>
-								订阅地址:<br>
-								<a href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/sub?token=${guest}','guest_0')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${url.hostname}/sub?token=${guest}</a><br>
-								<div id="guest_0" style="margin: 10px 10px 10px 10px;"></div>
-								Base64订阅地址:<br>
-								<a href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/sub?token=${guest}&b64','guest_1')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${url.hostname}/sub?token=${guest}&b64</a><br>
-								<div id="guest_1" style="margin: 10px 10px 10px 10px;"></div>
-								clash订阅地址:<br>
-								<a href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/sub?token=${guest}&clash','guest_2')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${url.hostname}/sub?token=${guest}&clash</a><br>
-								<div id="guest_2" style="margin: 10px 10px 10px 10px;"></div>
-								singbox订阅地址:<br>
-								<a href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/sub?token=${guest}&sb','guest_3')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${url.hostname}/sub?token=${guest}&sb</a><br>
-								<div id="guest_3" style="margin: 10px 10px 10px 10px;"></div>
-								surge订阅地址:<br>
-								<a href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/sub?token=${guest}&surge','guest_4')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${url.hostname}/sub?token=${guest}&surge</a><br>
-								<div id="guest_4" style="margin: 10px 10px 10px 10px;"></div>
-								loon订阅地址:<br>
-								<a href="javascript:void(0)" onclick="copyToClipboard('https://${url.hostname}/sub?token=${guest}&loon','guest_5')" style="color:blue;text-decoration:underline;cursor:pointer;">https://${url.hostname}/sub?token=${guest}&loon</a><br>
-								<div id="guest_5" style="margin: 10px 10px 10px 10px;"></div>
+								<div class="sub-item">
+									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}','guest_0')">
+										自适应订阅地址: https://${url.hostname}/sub?token=${guest}
+									</a>
+									<div id="guest_0" class="qr-container"></div>
+								</div>
+								
+								<div class="sub-item">
+									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&b64','guest_1')">
+										Base64订阅地址: https://${url.hostname}/sub?token=${guest}&b64
+									</a>
+									<div id="guest_1" class="qr-container"></div>
+								</div>
+								
+								<div class="sub-item">
+									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&clash','guest_2')">
+										clash订阅地址: https://${url.hostname}/sub?token=${guest}&clash
+									</a>
+									<div id="guest_2" class="qr-container"></div>
+								</div>
+								
+								<div class="sub-item">
+									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&sb','guest_3')">
+										singbox订阅地址: https://${url.hostname}/sub?token=${guest}&sb
+									</a>
+									<div id="guest_3" class="qr-container"></div>
+								</div>
+								
+								<div class="sub-item">
+									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&surge','guest_4')">
+										surge订阅地址: https://${url.hostname}/sub?token=${guest}&surge
+									</a>
+									<div id="guest_4" class="qr-container"></div>
+								</div>
+								
+								<div class="sub-item">
+									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&loon','guest_5')">
+										loon订阅地址: https://${url.hostname}/sub?token=${guest}&loon
+									</a>
+									<div id="guest_5" class="qr-container"></div>
+								</div>
 							</div>
 						</div>
 						
 						<hr class="divider">
 						
 						<div class="section">
-							<h2 class="section-title">${FileName} 汇聚订阅编辑</h2>
+							<h2 class="section-title">SuFu代理订阅编辑</h2>
 							${hasKV ? `
 							<textarea class="editor" id="content">${content}</textarea>
 							<div class="save-container">
@@ -738,6 +757,21 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					</div>
 					<script>
 					function handleSubscription(text, qrcodeId) {
+						// 复制到剪贴板
+						const textarea = document.createElement('textarea');
+						textarea.value = text;
+						textarea.style.position = 'fixed';
+						textarea.style.opacity = '0';
+						document.body.appendChild(textarea);
+						textarea.select();
+						try {
+							document.execCommand('copy');
+							alert('复制成功');
+						} catch (err) {
+							console.error('复制失败:', err);
+						}
+						document.body.removeChild(textarea);
+						
 						// 切换二维码显示/隐藏
 						const qrcodeDiv = document.getElementById(qrcodeId);
 						if (qrcodeDiv) {
@@ -757,20 +791,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 								qrcodeDiv.style.display = 'none';
 							}
 						}
-						
-						// 静默复制到剪贴板
-						const textarea = document.createElement('textarea');
-						textarea.value = text;
-						textarea.style.position = 'fixed';
-						textarea.style.opacity = '0';
-						document.body.appendChild(textarea);
-						textarea.select();
-						try {
-							document.execCommand('copy');
-						} catch (err) {
-							console.error('复制失败:', err);
-						}
-						document.body.removeChild(textarea);
 					}
 						
 					if (document.querySelector('.editor')) {
