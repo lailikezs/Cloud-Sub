@@ -592,61 +592,51 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							font-size: 1.5em;
 							font-weight: 600;
 							text-align: center;
+							cursor: pointer;
 						}
-						.sub-link {
-							display: block;
-							margin: 8px 0;
-							padding: 12px;
-							color: #2196F3;
+						.section-title a {
+							color: inherit;
 							text-decoration: none;
-							background: #fff;
-							border-radius: 6px;
-							transition: all 0.2s ease;
 						}
-						.sub-link:hover {
-							background: #f1f8ff;
-							transform: translateX(4px);
-						}
-						.qr-container {
-							margin: 12px 0;
-							padding: 12px;
-							background: #fff;
-							border-radius: 6px;
-							display: none;  /* 默认隐藏二维码 */
+						.sub-item a {
+							color: #333;
+							text-decoration: none;
+							padding: 8px 12px;
+							display: block;
+							position: relative;
 						}
 						.editor {
-							width: 100%;
+							width: 760px;
 							height: 300px;
-							margin: 12px 0;
+							margin: 12px auto;
 							padding: 16px;
 							border: 1px solid #e0e0e0;
 							border-radius: 8px;
 							font-family: monospace;
-						}
-						.sub-item {
-							margin-bottom: 15px;
-							padding: 10px;
-							background: #f8f9fa;
-							border-radius: 8px;
-						}
-						.sub-item a {
-							color: #2196F3;
-							text-decoration: none;
-							padding: 8px 12px;
 							display: block;
 						}
-						.sub-item a:hover {
-							background: #e3f2fd;
+						.copy-success {
+							position: fixed;
+							top: 20px;
+							left: 50%;
+							transform: translateX(-50%);
+							background: rgba(0, 0, 0, 0.7);
+							color: white;
+							padding: 8px 16px;
 							border-radius: 4px;
+							opacity: 0;
+							transition: opacity 0.3s;
+							z-index: 1000;
 						}
 					</style>
 				</head>
 				<body>
+					<div id="copySuccess" class="copy-success">复制成功</div>
 					<div class="container">
 						<div class="section">
-							<h2 class="section-title">SuFu代理订阅配置</h2>
-							<p>点击链接复制地址并显示二维码，再次点击隐藏二维码</p>
-							
+							<h2 class="section-title">
+								<a href="https://sufu.20050626.xyz/" target="_blank">SuFu代理订阅配置</a>
+							</h2>
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?sub', 'qrcode_0')">
 									自适应订阅地址: https://${url.hostname}/${mytoken}?sub
@@ -756,6 +746,14 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						</div>
 					</div>
 					<script>
+					function showCopySuccess() {
+						const copySuccess = document.getElementById('copySuccess');
+						copySuccess.style.opacity = '1';
+						setTimeout(() => {
+							copySuccess.style.opacity = '0';
+						}, 1000);
+					}
+					
 					function handleSubscription(text, qrcodeId) {
 						// 复制到剪贴板
 						const textarea = document.createElement('textarea');
@@ -766,7 +764,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						textarea.select();
 						try {
 							document.execCommand('copy');
-							alert('复制成功');
+							showCopySuccess();
 						} catch (err) {
 							console.error('复制失败:', err);
 						}
