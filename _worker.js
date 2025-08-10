@@ -600,8 +600,8 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							color: #333;
 						}
 						.editor {
-							width: 100%;  /* 改为100%适应容器 */
-							max-width: 760px;
+							width: 95%;  /* 缩小宽度 */
+							max-width: 720px;
 							height: 300px;
 							margin: 12px auto;
 							padding: 16px;
@@ -630,14 +630,34 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							padding: 8px 12px;
 							display: block;
 						}
+						.sub-item {
+							position: relative;
+						}
+						.qr-container {
+							position: absolute;
+							left: 200px;  /* 向右偏移 */
+							top: 0;
+							margin: 0;
+							padding: 12px;
+							background: #fff;
+							border-radius: 6px;
+							display: none;
+						}
 						.notice-toggle {
-							display: block;
-							margin: 12px 0;
-							padding: 8px 16px;
+							display: inline-block;
+							margin: 16px 12px;
+							padding: 6px 12px;
 							color: #2196F3;
+							background: #f1f8ff;
+							border: 1px solid #e1f2ff;
+							border-radius: 4px;
 							text-decoration: none;
 							font-size: 14px;
 							cursor: pointer;
+							transition: all 0.2s ease;
+						}
+						.notice-toggle:hover {
+							background: #e1f2ff;
 						}
 					</style>
 				</head>
