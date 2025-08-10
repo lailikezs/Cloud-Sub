@@ -588,50 +588,20 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						}
 						.section-title {
 							margin: 0 0 16px 0;
-							color: #2c3e50;
 							font-size: 1.5em;
 							font-weight: 600;
 							text-align: center;
-							cursor: pointer;
 						}
-						.section-title a {
-							color: inherit;
-							text-decoration: none;
-						}
-						.sub-item a {
+						.section-title a.sufu-link {
 							color: #2196F3;
 							text-decoration: none;
-							padding: 8px 12px;
-							display: block;
-							position: relative;
 						}
-						.qr-container {
-							margin: 12px 0 12px 12px; /* 左侧对齐 */
-							padding: 12px;
-							background: #fff;
-							border-radius: 6px;
-							display: none;
-						}
-						.notice-toggle {
-							display: inline-block;
-							margin: 12px 0;
-							padding: 8px 16px;
-							color: #FF9800;
-							background: #fff3e0;
-							border-radius: 20px;
-							cursor: pointer;
-							transition: all 0.2s ease;
-							text-decoration: none;
-							font-size: 14px;
-							font-weight: 500;
-							box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-						}
-						.notice-toggle:hover {
-							background: #ffe0b2;
-							box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+						.section-title span {
+							color: #333;
 						}
 						.editor {
-							width: 760px;
+							width: 100%;  /* 改为100%适应容器 */
+							max-width: 760px;
 							height: 300px;
 							margin: 12px auto;
 							padding: 16px;
@@ -639,7 +609,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							border-radius: 8px;
 							font-family: monospace;
 							display: block;
-							resize: none; /* 禁止拉伸 */
+							resize: none;
 						}
 						.copy-success {
 							position: fixed;
@@ -661,7 +631,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					<div class="container">
 						<div class="section">
 							<h2 class="section-title">
-								<a href="https://sufu.20050626.xyz/" target="_blank">SuFu代理订阅配置</a>
+								<a href="https://sufu.20050626.xyz/" target="_blank" class="sufu-link">SuFu</a><span>代理订阅配置</span>
 							</h2>
 							<div class="sub-item">
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?sub', 'qrcode_0')">
