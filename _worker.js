@@ -559,6 +559,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					<title>${FileName} 订阅编辑</title>
 					<meta charset="utf-8">
 					<meta name="viewport" content="width=device-width, initial-scale=1">
+					<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
 					<style>
 						body {
 							margin: 0;
@@ -738,12 +739,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						<hr class="divider">
 						
 						<div class="section">
-							<h2 class="section-title">订阅转换配置</h2>
-							<div>SUBAPI（订阅转换后端）: <strong>${subProtocol}://${subConverter}</strong></div>
-							<div>SUBCONFIG（订阅转换配置文件）: <strong>${subConfig}</strong></div>
-						</div>
-						
-						<div class="section">
 							<h2 class="section-title">${FileName} 汇聚订阅编辑</h2>
 							${hasKV ? `
 							<textarea class="editor" id="content">${content}</textarea>
@@ -760,22 +755,32 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					</div>
 					<script>
 					function copyToClipboard(text, qrcode) {
-						navigator.clipboard.writeText(text).then(() => {
+						// 复制到剪贴板
+						const textarea = document.createElement('textarea');
+						textarea.value = text;
+						document.body.appendChild(textarea);
+						textarea.select();
+						try {
+							document.execCommand('copy');
 							alert('已复制到剪贴板');
-						}).catch(err => {
+						} catch (err) {
 							console.error('复制失败:', err);
-						});
+						}
+						document.body.removeChild(textarea);
+						
+						// 生成二维码
 						const qrcodeDiv = document.getElementById(qrcode);
-						qrcodeDiv.innerHTML = '';
-						new QRCode(qrcodeDiv, {
-							text: text,
-							width: 220, // 调整宽度
-							height: 220, // 调整高度
-							colorDark: "#000000", // 二维码颜色
-							colorLight: "#ffffff", // 背景颜色
-							correctLevel: QRCode.CorrectLevel.Q, // 设置纠错级别
-							scale: 1 // 调整像素颗粒度
-						});
+						if(qrcodeDiv) {
+							qrcodeDiv.innerHTML = '';
+							new QRCode(qrcodeDiv, {
+								text: text,
+								width: 220,
+								height: 220,
+								colorDark: "#000000",
+								colorLight: "#ffffff",
+								correctLevel: QRCode.CorrectLevel.H
+							});
+						}
 					}
 						
 					if (document.querySelector('.editor')) {
