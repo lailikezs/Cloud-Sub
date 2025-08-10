@@ -589,8 +589,9 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						.section-title {
 							margin: 0 0 16px 0;
 							color: #2c3e50;
-							font-size: 1.2em;
+							font-size: 1.5em;
 							font-weight: 600;
+							text-align: center;
 						}
 						.sub-link {
 							display: block;
@@ -613,6 +614,15 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							border-radius: 6px;
 							display: none;  /* 默认隐藏二维码 */
 						}
+						.editor {
+							width: 100%;
+							min-height: 300px;
+							margin: 12px 0;
+							padding: 16px;
+							border: 1px solid #e0e0e0;
+							border-radius: 8px;
+							font-family: monospace;
+						}
 						.sub-item {
 							margin-bottom: 15px;
 							padding: 10px;
@@ -634,7 +644,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 				<body>
 					<div class="container">
 						<div class="section">
-							<h2 class="section-title">订阅地址</h2>
+							<h2 class="section-title">SuFu代理订阅配置</h2>
 							<p>点击链接复制地址并显示二维码，再次点击隐藏二维码</p>
 							
 							<div class="sub-item">
@@ -728,19 +738,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					</div>
 					<script>
 					function handleSubscription(text, qrcodeId) {
-						// 复制到剪贴板
-						const textarea = document.createElement('textarea');
-						textarea.value = text;
-						document.body.appendChild(textarea);
-						textarea.select();
-						try {
-							document.execCommand('copy');
-							alert('已复制到剪贴板');
-						} catch (err) {
-							console.error('复制失败:', err);
-						}
-						document.body.removeChild(textarea);
-						
 						// 切换二维码显示/隐藏
 						const qrcodeDiv = document.getElementById(qrcodeId);
 						if (qrcodeDiv) {
@@ -760,6 +757,20 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 								qrcodeDiv.style.display = 'none';
 							}
 						}
+						
+						// 静默复制到剪贴板
+						const textarea = document.createElement('textarea');
+						textarea.value = text;
+						textarea.style.position = 'fixed';
+						textarea.style.opacity = '0';
+						document.body.appendChild(textarea);
+						textarea.select();
+						try {
+							document.execCommand('copy');
+						} catch (err) {
+							console.error('复制失败:', err);
+						}
+						document.body.removeChild(textarea);
 					}
 						
 					if (document.querySelector('.editor')) {
