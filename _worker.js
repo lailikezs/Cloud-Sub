@@ -563,11 +563,9 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					<style>
 						body {
 							margin: 0;
-							padding: 15px;
+							padding: 15px; /* 调整padding */
 							box-sizing: border-box;
-							font-size: 13px;
-							background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
-							min-height: 100vh;
+							font-size: 13px; /* 设置全局字体大小 */
 						}
 						.container {
 							max-width: 800px;
@@ -577,11 +575,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							border-radius: 12px;
 							box-shadow: 0 2px 20px rgba(0,0,0,0.1);
 							font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-							animation: fadeIn 0.5s ease;
-						}
-						@keyframes fadeIn {
-							from { opacity: 0; transform: translateY(20px); }
-							to { opacity: 1; transform: translateY(0); }
 						}
 						.section {
 							margin-bottom: 24px;
@@ -589,41 +582,56 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							background: #f8f9fa;
 							border-radius: 8px;
 							transition: all 0.3s ease;
-							animation: slideIn 0.5s ease;
-						}
-						@keyframes slideIn {
-							from { opacity: 0; transform: translateX(-20px); }
-							to { opacity: 1; transform: translateX(0); }
 						}
 						.section:hover {
 							box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-							transform: translateY(-2px);
 						}
-						.sub-item {
-							position: relative;
-							transition: all 0.3s ease;
+						.section-title {
+							margin: 0 0 16px 0;
+							font-size: 1.5em;
+							font-weight: 600;
+							text-align: center;
 						}
-						.sub-item:hover {
-							background: rgba(33,150,243,0.05);
+						.section-title a.sufu-link {
+							color: #2196F3;
+							text-decoration: none;
+						}
+						.section-title span {
+							color: #333;
+						}
+						.editor {
+							width: 95%;  /* 缩小宽度 */
+							max-width: 720px;
+							height: 300px;
+							margin: 12px auto;
+							padding: 16px;
+							border: 1px solid #e0e0e0;
 							border-radius: 8px;
-						}
-						.qr-container {
-							position: absolute;
-							left: 180px;
-							top: 50%;
-							transform: translateY(-50%);
-							margin: 0;
-							padding: 12px;
-							background: #fff;
-							border-radius: 6px;
-							box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-							display: none;
-							opacity: 0;
-							transition: opacity 0.3s ease;
-						}
-						.qr-container.show {
+							font-family: monospace;
 							display: block;
-							opacity: 1;
+							resize: none;
+						}
+						.copy-success {
+							position: fixed;
+							top: 20px;
+							left: 50%;
+							transform: translateX(-50%);
+							background: rgba(0, 0, 0, 0.7);
+							color: white;
+							padding: 8px 16px;
+							border-radius: 4px;
+							opacity: 0;
+							transition: opacity 0.3s;
+							z-index: 1000;
+						}
+						.sub-item a {
+							color: #2196F3;
+							text-decoration: none;
+							padding: 8px 12px;
+							display: block;
+						}
+						.sub-item a span {
+							color: #333; /* 描述文字改为黑色 */
 						}
 						.notice-toggle {
 							display: inline-block;
@@ -636,27 +644,12 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							text-decoration: none;
 							font-size: 14px;
 							cursor: pointer;
-							transition: all 0.3s ease;
+							transition: all 0.2s ease;
 							box-shadow: 0 2px 4px rgba(33,150,243,0.2);
 						}
 						.notice-toggle:hover {
 							background: #1976D2;
-							transform: translateY(-1px);
 							box-shadow: 0 4px 8px rgba(33,150,243,0.3);
-						}
-						.notice-content {
-							display: none;
-							opacity: 0;
-							transition: all 0.3s ease;
-						}
-						.notice-content.show {
-							display: block;
-							opacity: 1;
-							animation: expandDown 0.3s ease;
-						}
-						@keyframes expandDown {
-							from { transform: scaleY(0); transform-origin: top; }
-							to { transform: scaleY(1); transform-origin: top; }
 						}
 					</style>
 				</head>
@@ -785,32 +778,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					}
 					
 					function handleSubscription(text, qrcodeId) {
-						const qrcodeDiv = document.getElementById(qrcodeId);
-						if (qrcodeDiv) {
-							const allQrContainers = document.querySelectorAll('.qr-container');
-							allQrContainers.forEach(container => {
-								if(container !== qrcodeDiv) {
-									container.classList.remove('show');
-								}
-							});
-							
-							if (!qrcodeDiv.classList.contains('show')) {
-								if (!qrcodeDiv.hasChildNodes()) {
-									new QRCode(qrcodeDiv, {
-										text: text,
-										width: 220,
-										height: 220,
-										colorDark: "#000000",
-										colorLight: "#ffffff",
-										correctLevel: QRCode.CorrectLevel.H
-									});
-								}
-								qrcodeDiv.classList.add('show');
-							} else {
-								qrcodeDiv.classList.remove('show');
-							}
-						}
-						
 						// 复制到剪贴板
 						const textarea = document.createElement('textarea');
 						textarea.value = text;
@@ -825,6 +792,26 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							console.error('复制失败:', err);
 						}
 						document.body.removeChild(textarea);
+						
+						// 切换二维码显示/隐藏
+						const qrcodeDiv = document.getElementById(qrcodeId);
+						if (qrcodeDiv) {
+							if (qrcodeDiv.style.display === 'none' || qrcodeDiv.style.display === '') {
+								qrcodeDiv.style.display = 'block';
+								if (!qrcodeDiv.hasChildNodes()) {
+									new QRCode(qrcodeDiv, {
+										text: text,
+										width: 220,
+										height: 220,
+										colorDark: "#000000",
+										colorLight: "#ffffff",
+										correctLevel: QRCode.CorrectLevel.H
+									});
+								}
+							} else {
+								qrcodeDiv.style.display = 'none';
+							}
+						}
 					}
 						
 					if (document.querySelector('.editor')) {
@@ -955,11 +942,11 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					function toggleNotice() {
 						const noticeContent = document.getElementById('noticeContent');
 						const noticeToggle = document.getElementById('noticeToggle');
-						if (!noticeContent.classList.contains('show')) {
-							noticeContent.classList.add('show');
+						if (noticeContent.style.display === 'none' || noticeContent.style.display === '') {
+							noticeContent.style.display = 'block';
 							noticeToggle.textContent = '隐藏访客订阅∧';
 						} else {
-							noticeContent.classList.remove('show');
+							noticeContent.style.display = 'none';
 							noticeToggle.textContent = '查看访客订阅∨';
 						}
 					}
