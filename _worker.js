@@ -755,6 +755,48 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							opacity: 0.9;
 							transform: translateY(-1px);
 						}
+						/* 优化访客订阅按钮样式 */
+						.notice-toggle {
+							display: block;
+							text-align: center;
+							padding: 15px 20px;
+							margin: 20px auto;
+							background: #f8f9fa;
+							border: 2px solid #e9ecef;
+							border-radius: 8px;
+							color: #2196F3;
+							font-size: 16px;
+							font-weight: 500;
+							text-decoration: none;
+							transition: all 0.3s ease;
+							cursor: pointer;
+							width: fit-content;
+							min-width: 200px;
+						}
+						.notice-toggle:hover {
+							background: #e9ecef;
+							transform: translateY(-2px);
+							box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+						}
+						/* 优化访客订阅内容的动画效果 */
+						.notice-content {
+							max-height: 0;
+							opacity: 0;
+							overflow: hidden;
+							transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+							background: #f8f9fa;
+							border-radius: 12px;
+							padding: 0 20px;
+							margin: 0;
+							transform: translateY(-20px);
+						}
+						.notice-content.show {
+							max-height: 2000px;
+							opacity: 1;
+							padding: 20px;
+							margin: 10px 0;
+							transform: translateY(0);
+						}
 					</style>
 				</head>
 				<body>
@@ -934,28 +976,34 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					}
 
 					function toggleNotice() {
-						const noticeContent = document.getElementById('noticeContent');
-						const noticeToggle = document.getElementById('noticeToggle');
-						
-						// 关闭所有打开的二维码
-						document.querySelectorAll('.qr-container.active').forEach(container => {
-							container.classList.remove('active');
-						});
-						
-						if (!noticeContent.classList.contains('show')) {
-							noticeContent.style.display = 'block';
-							requestAnimationFrame(() => {
-								noticeContent.classList.add('show');
+							const noticeContent = document.getElementById('noticeContent');
+							const noticeToggle = document.getElementById('noticeToggle');
+							
+							// 关闭所有打开的二维码
+							document.querySelectorAll('.qr-container.active').forEach(container => {
+								container.classList.remove('active');
 							});
-							noticeToggle.textContent = '隐藏访客订阅∧';
-						} else {
-							noticeContent.classList.remove('show');
-							setTimeout(() => {
-								noticeContent.style.display = 'none';
-							}, 400); // 与过渡时间匹配
-							noticeToggle.textContent = '查看访客订阅∨';
+							
+							if (!noticeContent.classList.contains('show')) {
+								// 展开动画
+								noticeContent.style.display = 'block';
+								requestAnimationFrame(() => {
+									noticeContent.classList.add('show');
+									noticeToggle.style.background = '#e9ecef';
+									noticeToggle.textContent = '收起访客订阅 ∧';
+								});
+							} else {
+								// 收起动画
+								noticeContent.classList.remove('show');
+								noticeToggle.style.background = '#f8f9fa';
+								noticeToggle.textContent = '查看访客订阅 ∨';
+								setTimeout(() => {
+									if (!noticeContent.classList.contains('show')) {
+										noticeContent.style.display = 'none';
+									}
+								}, 600); // 与 CSS transition 时间匹配
+							}
 						}
-					}
 						
 					if (document.querySelector('.editor')) {
 						let timer;
