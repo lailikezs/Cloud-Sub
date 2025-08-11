@@ -576,28 +576,27 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					<style>
 						body {
 							margin: 0;
-							padding: 2%; /* 改为百分比 */
+							padding: 2%;
 							box-sizing: border-box;
-							font-size: 13px;
+							font-size: 15px; /* 增大基础字体大小 */
 						}
 						.container {
-							width: 90%; /* 改为百分比 */
-							max-width: 1000px;
+							width: 92%;
+							max-width: 1200px; /* 增加最大宽度 */
 							margin: 2% auto;
-							padding: 2%;
+							padding: 2.5%;
 							background: #fff;
 							border-radius: 12px;
 							box-shadow: 0 2px 20px rgba(0,0,0,0.1);
 							font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 						}
 						.section {
-							margin-bottom: 2%;
-							padding: 2%;
+							margin-bottom: 2.5%;
+							padding: 2.5%;
 							background: #f8f9fa;
-							border-radius: 8px;
+							border-radius: 12px; /* 增加圆角 */
 							transition: all 0.3s ease;
 						}
-						/* 更新二维码容器样式 */
 						.qr-container {
 							flex-shrink: 0;
 							overflow: hidden;
@@ -636,98 +635,81 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							color: #333;
 						}
 						.editor {
-							width: 95%;  /* 缩小宽度 */
-							max-width: 720px;
-							height: 300px;
-							margin: 12px auto;
-							padding: 16px;
+							width: 98%;  /* 增加编辑框宽度 */
+							max-width: 1100px; /* 增加最大宽度 */
+							height: 400px; /* 增加高度 */
+							margin: 15px auto;
+							padding: 20px;
 							border: 1px solid #e0e0e0;
 							border-radius: 8px;
-							font-family: monospace;
+							font-family: 'Consolas', monospace;
+							font-size: 14px; /* 编辑器字体大小 */
+							line-height: 1.5;
 							display: block;
-							resize: none;
+							resize: vertical; /* 允许垂直拖动调整大小 */
+							background: #fafafa;
 						}
-						.copy-success {
-							position: fixed;
-							top: 20px;
-							left: 50%;
-							transform: translateX(-50%);
-							background: rgba(0, 0, 0, 0.7);
+						.save-btn {
+							background: #4CAF50; /* 更改按钮颜色 */
 							color: white;
-							padding: 8px 16px;
-							border-radius: 4px;
-							opacity: 0;
-							transition: opacity 0.3s;
-							z-index: 1000;
-						}
-						.notice-toggle {
-							display: inline-block;
-							margin: 16px 12px;
-							padding: 8px 20px;
-							color: #666;
-							background: #f8f9fa;
-							border: 1px solid #e0e0e0;
-							border-radius: 20px;
-							text-decoration: none;
-							font-size: 14px;
+							padding: 10px 25px;
+							border: none;
+							border-radius: 5px;
+							font-size: 15px;
 							cursor: pointer;
-							transition: all 0.2s ease;
-							box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+							transition: all 0.3s ease;
+							box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 						}
-						.notice-toggle:hover {
-							background: #fff;
-							box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+						.save-btn:hover {
+							background: #45a049;
+							box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+						}
+						.save-btn:disabled {
+							background: #cccccc;
+							cursor: not-allowed;
 						}
 						.sub-item a {
 							color: #2196F3;
 							text-decoration: none;
-							padding: 8px 0;
+							padding: 10px 0; /* 增加点击区域 */
 							display: block;
+							font-size: 15px; /* 增大字体 */
 						}
 						.sub-item a span {
 							color: #333;
-							margin-right: 5px;
+							margin-right: 8px;
+							font-weight: 500;
 						}
-						/* 密码输入框样式 */
-						.password-dialog {
-							position: fixed;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-							background: white;
-							padding: 20px;
-							border-radius: 8px;
-							box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-							z-index: 1000;
-							width: 300px;
+						.save-container {
 							text-align: center;
+							margin: 20px 0;
 						}
-						.password-dialog input {
-							width: 100%;
-							padding: 8px;
-							margin: 10px 0;
-							border: 1px solid #e0e0e0;
-							border-radius: 4px;
+						#saveStatus {
+							display: inline-block;
+							margin-left: 15px;
 							font-size: 14px;
+							color: #666;
 						}
 						.password-dialog button {
-							padding: 8px 20px;
-							margin: 0 5px;
+							padding: 10px 25px;
+							margin: 0 8px;
 							border: none;
-							border-radius: 4px;
+							border-radius: 5px;
 							cursor: pointer;
-							transition: all 0.2s;
+							transition: all 0.3s;
+							font-size: 14px;
 						}
 						.password-dialog button.confirm {
-							background: #2196F3;
+							background: #4CAF50;
 							color: white;
 						}
 						.password-dialog button.cancel {
-							background: #f8f9fa;
+							background: #f1f1f1;
 							color: #666;
 						}
 						.password-dialog button:hover {
 							opacity: 0.9;
+							transform: translateY(-1px);
 						}
 					</style>
 				</head>
