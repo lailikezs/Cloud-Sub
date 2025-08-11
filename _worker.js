@@ -1071,19 +1071,20 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							const confirmBtn = dialog.querySelector('.confirm');
 							const cancelBtn = dialog.querySelector('.cancel');
 
-							const closeDialog = () => {
+							const closeDialog = (shouldReset = true) => {
 								document.body.removeChild(dialog);
 								document.body.removeChild(overlay);
+								if (shouldReset) saving = false; // 取消时重置保存状态
 							};
 
 							confirmBtn.onclick = function() {
 								const password = input.value;
-								closeDialog();
+								closeDialog(false); // 确认时不重置状态
 								callback(password);
 							};
 
-							cancelBtn.onclick = closeDialog;
-							overlay.onclick = closeDialog;
+							cancelBtn.onclick = () => closeDialog(true);
+							overlay.onclick = () => closeDialog(true);
 
 							input.focus();
 							input.onkeyup = function(e) {
