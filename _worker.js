@@ -265,7 +265,19 @@ async function nginx() {
 		text-decoration: underline;
 	}
 .qr-container { flex-shrink: 0; } 
-        </style>
+        
+.qr-container {
+    flex-shrink: 0;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+.qr-container.active {
+    max-height: 260px; /* 比二维码高度略高 */
+    opacity: 1;
+}
+    </style>
 	</head>
 <body>
 	<div class="container">
@@ -653,7 +665,19 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							box-shadow: 0 4px 8px rgba(33,150,243,0.3);
 						}
 					.qr-container { flex-shrink: 0; } 
-        </style>
+        
+.qr-container {
+    flex-shrink: 0;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+.qr-container.active {
+    max-height: 260px; /* 比二维码高度略高 */
+    opacity: 1;
+}
+    </style>
 				</head>
 				<body>
 					<div id="copySuccess" class="copy-success">复制成功</div>
@@ -798,8 +822,8 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						// 切换二维码显示/隐藏
 						const qrcodeDiv = document.getElementById(qrcodeId);
 						if (qrcodeDiv) {
-							if (qrcodeDiv.style.display === 'none' || qrcodeDiv.style.display === '') {
-								qrcodeDiv.style.display = 'block';
+							if (!qrcodeDiv.classList.contains('active')) {
+								qrcodeDiv.classList.add('active');
 								if (!qrcodeDiv.hasChildNodes()) {
 									new QRCode(qrcodeDiv, {
 										text: text,
@@ -811,7 +835,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 									});
 								}
 							} else {
-								qrcodeDiv.style.display = 'none';
+								qrcodeDiv.classList.remove('active');
 							}
 						}
 					}
