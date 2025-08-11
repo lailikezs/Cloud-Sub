@@ -576,28 +576,51 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					<style>
 						body {
 							margin: 0;
-							padding: 15px; /* 调整padding */
+							padding: 2%; /* 改为百分比 */
 							box-sizing: border-box;
-							font-size: 13px; /* 设置全局字体大小 */
+							font-size: 13px;
 						}
 						.container {
-							max-width: 800px;
-							margin: 32px auto;
-							padding: 24px;
+							width: 90%; /* 改为百分比 */
+							max-width: 1000px;
+							margin: 2% auto;
+							padding: 2%;
 							background: #fff;
 							border-radius: 12px;
 							box-shadow: 0 2px 20px rgba(0,0,0,0.1);
 							font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 						}
 						.section {
-							margin-bottom: 24px;
-							padding: 20px;
+							margin-bottom: 2%;
+							padding: 2%;
 							background: #f8f9fa;
 							border-radius: 8px;
 							transition: all 0.3s ease;
 						}
-						.section:hover {
-							box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+						/* 更新二维码容器样式 */
+						.qr-container {
+							flex-shrink: 0;
+							overflow: hidden;
+							max-height: 0;
+							opacity: 0;
+							transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+							margin: 0 auto;
+						}
+						.qr-container.active {
+							max-height: 260px;
+							opacity: 1;
+							margin: 1% auto;
+						}
+						/* 访客订阅内容动画 */
+						.notice-content {
+							max-height: 0;
+							overflow: hidden;
+							opacity: 0;
+							transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+						}
+						.notice-content.show {
+							max-height: 2000px; /* 足够大的高度 */
+							opacity: 1;
 						}
 						.section-title {
 							margin: 0 0 16px 0;
@@ -851,6 +874,13 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						// 切换二维码显示/隐藏
 						const qrcodeDiv = document.getElementById(qrcodeId);
 						if (qrcodeDiv) {
+							// 关闭其他打开的二维码
+							document.querySelectorAll('.qr-container.active').forEach(container => {
+								if(container !== qrcodeDiv) {
+									container.classList.remove('active');
+								}
+							});
+							
 							if (!qrcodeDiv.classList.contains('active')) {
 								qrcodeDiv.classList.add('active');
 								if (!qrcodeDiv.hasChildNodes()) {
@@ -866,6 +896,30 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							} else {
 								qrcodeDiv.classList.remove('active');
 							}
+						}
+					}
+
+					function toggleNotice() {
+						const noticeContent = document.getElementById('noticeContent');
+						const noticeToggle = document.getElementById('noticeToggle');
+						
+						// 关闭所有打开的二维码
+						document.querySelectorAll('.qr-container.active').forEach(container => {
+							container.classList.remove('active');
+						});
+						
+						if (!noticeContent.classList.contains('show')) {
+							noticeContent.style.display = 'block';
+							requestAnimationFrame(() => {
+								noticeContent.classList.add('show');
+							});
+							noticeToggle.textContent = '隐藏访客订阅∧';
+						} else {
+							noticeContent.classList.remove('show');
+							setTimeout(() => {
+								noticeContent.style.display = 'none';
+							}, 400); // 与过渡时间匹配
+							noticeToggle.textContent = '查看访客订阅∨';
 						}
 					}
 						
@@ -1045,7 +1099,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 								// 等待动画完成后再隐藏元素
 								setTimeout(() => {
 									noticeContent.style.display = 'none';
-								}, 300);
+								}, 400); // 与过渡时间匹配
 								noticeToggle.textContent = '查看访客订阅∨';
 							}
 						}
