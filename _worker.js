@@ -694,22 +694,52 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							padding: 10px 25px;
 							margin: 0 8px;
 							border: none;
-							border-radius: 5px;
+							border-radius: 8px;
 							cursor: pointer;
 							transition: all 0.3s;
-							font-size: 14px;
+							font-size: 15px;
+							font-weight: 500;
 						}
 						.password-dialog button.confirm {
 							background: #4CAF50;
 							color: white;
 						}
 						.password-dialog button.cancel {
-							background: #f1f1f1;
+							background: #f5f5f5;
 							color: #666;
 						}
 						.password-dialog button:hover {
-							opacity: 0.9;
-							transform: translateY(-1px);
+							transform: translateY(-2px);
+							box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+						}
+						.password-dialog button:active {
+							transform: translateY(0);
+						}
+						@keyframes dialogFadeIn {
+							from {
+								opacity: 0;
+								transform: translate(-50%, -48%);
+							}
+							to {
+								opacity: 1;
+								transform: translate(-50%, -50%);
+							}
+						}
+						/* 添加遮罩层 */
+						.dialog-overlay {
+							position: fixed;
+							top: 0;
+							left: 0;
+							right: 0;
+							bottom: 0;
+							background: rgba(0, 0, 0, 0.5);
+							backdrop-filter: blur(4px);
+							z-index: 999;
+							opacity: 0;
+							transition: opacity 0.3s ease;
+						}
+						.dialog-overlay.active {
+							opacity: 1;
 						}
 					</style>
 				</head>
@@ -831,10 +861,10 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					<script>
 					function showCopySuccess() {
 						const copySuccess = document.getElementById('copySuccess');
-						copySuccess.style.opacity = '1';
+						copySuccess.classList.add('active');
 						setTimeout(() => {
-							copySuccess.style.opacity = '0';
-						}, 1000);
+							copySuccess.classList.remove('active');
+						}, 2000);
 					}
 					
 					function handleSubscription(text, qrcodeId) {
@@ -944,10 +974,15 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						}
 
 						function showPasswordDialog(callback) {
+							// 创建遮罩层
+							const overlay = document.createElement('div');
+							overlay.className = 'dialog-overlay';
+							document.body.appendChild(overlay);
+							
 							const dialog = document.createElement('div');
 							dialog.className = 'password-dialog';
 							dialog.innerHTML =
-								'<h3>请输入密码</h3>' +
+								'<h3>请输入管理密码</h3>' +
 								'<input type="password" id="password-input" placeholder="请输入密码">' +
 								'<div>' +
 									'<button class="confirm">确认</button>' +
@@ -955,25 +990,45 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 								'</div>';
 
 							document.body.appendChild(dialog);
+							
+							// 添加淡入效果
+							requestAnimationFrame(() => {
+								overlay.classList.add('active');
+							});
 
 							const input = dialog.querySelector('input');
 							const confirmBtn = dialog.querySelector('.confirm');
 							const cancelBtn = dialog.querySelector('.cancel');
 
+							function closeDialog() {
+								overlay.classList.remove('active');
+								dialog.style.opacity = '0';
+								dialog.style.transform = 'translate(-50%, -48%)';
+								setTimeout(() => {
+									document.body.removeChild(dialog);
+									document.body.removeChild(overlay);
+								}, 300);
+							}
+
 							confirmBtn.onclick = function() {
 								const password = input.value;
-								document.body.removeChild(dialog);
+								closeDialog();
 								callback(password);
 							};
 
-							cancelBtn.onclick = function() {
-								document.body.removeChild(dialog);
-							};
+							cancelBtn.onclick = closeDialog;
 
 							input.focus();
 							input.onkeyup = function(e) {
 								if (e.key === 'Enter') confirmBtn.click();
 								if (e.key === 'Escape') cancelBtn.click();
+							};
+							
+							// 点击遮罩层关闭弹窗
+							overlay.onclick = function(e) {
+								if (e.target === overlay) {
+									closeDialog();
+								}
 							};
 						}
 
