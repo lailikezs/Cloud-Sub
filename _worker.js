@@ -264,7 +264,8 @@ async function nginx() {
 	.link:hover {
 		text-decoration: underline;
 	}
-</style>
+.qr-container { flex-shrink: 0; } 
+        </style>
 	</head>
 <body>
 	<div class="container">
@@ -651,7 +652,8 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							background: #1976D2;
 							box-shadow: 0 4px 8px rgba(33,150,243,0.3);
 						}
-					</style>
+					.qr-container { flex-shrink: 0; } 
+        </style>
 				</head>
 				<body>
 					<div id="copySuccess" class="copy-success">复制成功</div>
