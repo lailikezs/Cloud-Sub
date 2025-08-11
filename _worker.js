@@ -578,7 +578,62 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							margin: 0;
 							padding: 2%;
 							box-sizing: border-box;
-							font-size: 15px; /* 增大基础字体大小 */
+							font-size: 15px;
+						}
+						/* 添加复制成功提示样式 */
+						.copy-success {
+							position: fixed;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+							background: rgba(0, 0, 0, 0.8);
+							color: white;
+							padding: 10px 20px;
+							border-radius: 4px;
+							z-index: 1000;
+							opacity: 0;
+							transition: opacity 0.3s;
+							pointer-events: none;
+						}
+						/* 添加密码输入弹窗样式 */
+						.password-dialog {
+							position: fixed;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+							background: white;
+							padding: 20px;
+							border-radius: 8px;
+							box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+							z-index: 1000;
+							text-align: center;
+						}
+						.password-dialog h3 {
+							margin: 0 0 15px;
+							color: #333;
+						}
+						.password-dialog input {
+							width: 200px;
+							padding: 8px 12px;
+							border: 1px solid #ddd;
+							border-radius: 4px;
+							margin-bottom: 15px;
+							font-size: 14px;
+						}
+						.password-dialog input:focus {
+							border-color: #4CAF50;
+							outline: none;
+							box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+						}
+						/* 给对话框添加遮罩层 */
+						.dialog-overlay {
+							position: fixed;
+							top: 0;
+							left: 0;
+							right: 0;
+							bottom: 0;
+							background: rgba(0, 0, 0, 0.5);
+							z-index: 999;
 						}
 						.container {
 							width: 92%;
@@ -609,17 +664,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							max-height: 260px;
 							opacity: 1;
 							margin: 1% auto;
-						}
-						/* 访客订阅内容动画 */
-						.notice-content {
-							max-height: 0;
-							overflow: hidden;
-							opacity: 0;
-							transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-						}
-						.notice-content.show {
-							max-height: 2000px; /* 足够大的高度 */
-							opacity: 1;
 						}
 						.section-title {
 							margin: 0 0 16px 0;
@@ -694,52 +738,22 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							padding: 10px 25px;
 							margin: 0 8px;
 							border: none;
-							border-radius: 8px;
+							border-radius: 5px;
 							cursor: pointer;
 							transition: all 0.3s;
-							font-size: 15px;
-							font-weight: 500;
+							font-size: 14px;
 						}
 						.password-dialog button.confirm {
 							background: #4CAF50;
 							color: white;
 						}
 						.password-dialog button.cancel {
-							background: #f5f5f5;
+							background: #f1f1f1;
 							color: #666;
 						}
 						.password-dialog button:hover {
-							transform: translateY(-2px);
-							box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-						}
-						.password-dialog button:active {
-							transform: translateY(0);
-						}
-						@keyframes dialogFadeIn {
-							from {
-								opacity: 0;
-								transform: translate(-50%, -48%);
-							}
-							to {
-								opacity: 1;
-								transform: translate(-50%, -50%);
-							}
-						}
-						/* 添加遮罩层 */
-						.dialog-overlay {
-							position: fixed;
-							top: 0;
-							left: 0;
-							right: 0;
-							bottom: 0;
-							background: rgba(0, 0, 0, 0.5);
-							backdrop-filter: blur(4px);
-							z-index: 999;
-							opacity: 0;
-							transition: opacity 0.3s ease;
-						}
-						.dialog-overlay.active {
-							opacity: 1;
+							opacity: 0.9;
+							transform: translateY(-1px);
 						}
 					</style>
 				</head>
@@ -860,12 +874,20 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					</div>
 					<script>
 					function showCopySuccess() {
-						const copySuccess = document.getElementById('copySuccess');
-						copySuccess.classList.add('active');
-						setTimeout(() => {
-							copySuccess.classList.remove('active');
-						}, 2000);
-					}
+							const copySuccess = document.getElementById('copySuccess');
+							if (!copySuccess) {
+								const div = document.createElement('div');
+								div.id = 'copySuccess';
+								div.className = 'copy-success';
+								div.textContent = '复制成功';
+								document.body.appendChild(div);
+								setTimeout(() => div.style.opacity = '1', 10);
+								setTimeout(() => {
+									div.style.opacity = '0';
+									setTimeout(() => document.body.removeChild(div), 300);
+								}, 1500);
+							}
+						}
 					
 					function handleSubscription(text, qrcodeId) {
 						// 复制到剪贴板
@@ -981,34 +1003,24 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							
 							const dialog = document.createElement('div');
 							dialog.className = 'password-dialog';
-							dialog.innerHTML =
-								'<h3>请输入管理密码</h3>' +
-								'<input type="password" id="password-input" placeholder="请输入密码">' +
+							dialog.innerHTML = 
+								'<h3>请输入密码</h3>' +
+								'<input type="password" id="password-input" placeholder="请输入密码" autocomplete="off">' +
 								'<div>' +
 									'<button class="confirm">确认</button>' +
 									'<button class="cancel">取消</button>' +
 								'</div>';
 
 							document.body.appendChild(dialog);
-							
-							// 添加淡入效果
-							requestAnimationFrame(() => {
-								overlay.classList.add('active');
-							});
 
 							const input = dialog.querySelector('input');
 							const confirmBtn = dialog.querySelector('.confirm');
 							const cancelBtn = dialog.querySelector('.cancel');
 
-							function closeDialog() {
-								overlay.classList.remove('active');
-								dialog.style.opacity = '0';
-								dialog.style.transform = 'translate(-50%, -48%)';
-								setTimeout(() => {
-									document.body.removeChild(dialog);
-									document.body.removeChild(overlay);
-								}, 300);
-							}
+							const closeDialog = () => {
+								document.body.removeChild(dialog);
+								document.body.removeChild(overlay);
+							};
 
 							confirmBtn.onclick = function() {
 								const password = input.value;
@@ -1017,18 +1029,12 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							};
 
 							cancelBtn.onclick = closeDialog;
+							overlay.onclick = closeDialog;
 
 							input.focus();
 							input.onkeyup = function(e) {
 								if (e.key === 'Enter') confirmBtn.click();
 								if (e.key === 'Escape') cancelBtn.click();
-							};
-							
-							// 点击遮罩层关闭弹窗
-							overlay.onclick = function(e) {
-								if (e.target === overlay) {
-									closeDialog();
-								}
 							};
 						}
 
