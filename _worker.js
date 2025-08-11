@@ -578,24 +578,94 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							margin: 0;
 							padding: 2%;
 							box-sizing: border-box;
-							font-size: 15px;
+							font-size: 16px; /* 增大基础字体大小 */
+							background-color: #f5f6fa;
 						}
-						/* 添加复制成功提示样式 */
-						.copy-success {
-							position: fixed;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-							background: rgba(0, 0, 0, 0.8);
-							color: white;
-							padding: 10px 20px;
-							border-radius: 4px;
-							z-index: 1000;
+						/* 修改容器最大宽度和样式 */
+						.container {
+							width: 96%;
+							max-width: 1400px; /* 增加最大宽度 */
+							margin: 2% auto;
+							padding: 3%;
+							background: #fff;
+							border-radius: 16px;
+							box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+						}
+						/* 优化访客订阅按钮样式 */
+						.notice-toggle {
+							display: block;
+							text-align: center;
+							padding: 15px 20px;
+							margin: 20px auto;
+							background: #f8f9fa;
+							border: 2px solid #e9ecef;
+							border-radius: 8px;
+							color: #2196F3;
+							font-size: 16px;
+							font-weight: 500;
+							text-decoration: none;
+							transition: all 0.3s ease;
+							width: fit-content;
+							min-width: 200px;
+						}
+						.notice-toggle:hover {
+							background: #e9ecef;
+							border-color: #dee2e6;
+							transform: translateY(-2px);
+						}
+						/* 优化展开内容的动画效果 */
+						.notice-content {
+							max-height: 0;
 							opacity: 0;
-							transition: opacity 0.3s;
-							pointer-events: none;
+							overflow: hidden;
+							transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+							background: #f8f9fa;
+							border-radius: 12px;
+							margin: 10px 0;
+							padding: 0 20px;
 						}
-						/* 添加密码输入弹窗样式 */
+						.notice-content.show {
+							max-height: 2000px;
+							opacity: 1;
+							padding: 20px;
+						}
+						/* 增大字体和优化间距 */
+						.section-title {
+							font-size: 1.8em;
+							margin: 0 0 25px 0;
+						}
+						.sub-item a {
+							font-size: 16px;
+							padding: 12px 0;
+						}
+						.sub-item a span {
+							font-size: 17px;
+						}
+						/* 优化编辑器样式 */
+						.editor {
+							font-size: 15px;
+							line-height: 1.6;
+							padding: 25px;
+						}
+						.save-btn {
+							background: #4CAF50; /* 更改按钮颜色 */
+							color: white;
+							padding: 10px 25px;
+							border: none;
+							border-radius: 5px;
+							font-size: 15px;
+							cursor: pointer;
+							transition: all 0.3s ease;
+							box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+						}
+						.save-btn:hover {
+							background: #45a049;
+							box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+						}
+						.save-btn:disabled {
+							background: #cccccc;
+							cursor: not-allowed;
+						}
 						.password-dialog {
 							position: fixed;
 							top: 50%;
@@ -635,16 +705,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							background: rgba(0, 0, 0, 0.5);
 							z-index: 999;
 						}
-						.container {
-							width: 92%;
-							max-width: 1200px; /* 增加最大宽度 */
-							margin: 2% auto;
-							padding: 2.5%;
-							background: #fff;
-							border-radius: 12px;
-							box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-							font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-						}
 						.section {
 							margin-bottom: 2.5%;
 							padding: 2.5%;
@@ -664,96 +724,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							max-height: 260px;
 							opacity: 1;
 							margin: 1% auto;
-						}
-						.section-title {
-							margin: 0 0 16px 0;
-							font-size: 1.5em;
-							font-weight: 600;
-							text-align: center;
-						}
-						.section-title a.sufu-link {
-							color: #2196F3;
-							text-decoration: none;
-						}
-						.section-title span {
-							color: #333;
-						}
-						.editor {
-							width: 98%;  /* 增加编辑框宽度 */
-							max-width: 1100px; /* 增加最大宽度 */
-							height: 400px; /* 增加高度 */
-							margin: 15px auto;
-							padding: 20px;
-							border: 1px solid #e0e0e0;
-							border-radius: 8px;
-							font-family: 'Consolas', monospace;
-							font-size: 14px; /* 编辑器字体大小 */
-							line-height: 1.5;
-							display: block;
-							resize: vertical; /* 允许垂直拖动调整大小 */
-							background: #fafafa;
-						}
-						.save-btn {
-							background: #4CAF50; /* 更改按钮颜色 */
-							color: white;
-							padding: 10px 25px;
-							border: none;
-							border-radius: 5px;
-							font-size: 15px;
-							cursor: pointer;
-							transition: all 0.3s ease;
-							box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-						}
-						.save-btn:hover {
-							background: #45a049;
-							box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-						}
-						.save-btn:disabled {
-							background: #cccccc;
-							cursor: not-allowed;
-						}
-						.sub-item a {
-							color: #2196F3;
-							text-decoration: none;
-							padding: 10px 0; /* 增加点击区域 */
-							display: block;
-							font-size: 15px; /* 增大字体 */
-						}
-						.sub-item a span {
-							color: #333;
-							margin-right: 8px;
-							font-weight: 500;
-						}
-						.save-container {
-							text-align: center;
-							margin: 20px 0;
-						}
-						#saveStatus {
-							display: inline-block;
-							margin-left: 15px;
-							font-size: 14px;
-							color: #666;
-						}
-						.password-dialog button {
-							padding: 10px 25px;
-							margin: 0 8px;
-							border: none;
-							border-radius: 5px;
-							cursor: pointer;
-							transition: all 0.3s;
-							font-size: 14px;
-						}
-						.password-dialog button.confirm {
-							background: #4CAF50;
-							color: white;
-						}
-						.password-dialog button.cancel {
-							background: #f1f1f1;
-							color: #666;
-						}
-						.password-dialog button:hover {
-							opacity: 0.9;
-							transform: translateY(-1px);
 						}
 					</style>
 				</head>
@@ -934,28 +904,33 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					}
 
 					function toggleNotice() {
-						const noticeContent = document.getElementById('noticeContent');
-						const noticeToggle = document.getElementById('noticeToggle');
-						
-						// 关闭所有打开的二维码
-						document.querySelectorAll('.qr-container.active').forEach(container => {
-							container.classList.remove('active');
-						});
-						
-						if (!noticeContent.classList.contains('show')) {
-							noticeContent.style.display = 'block';
-							requestAnimationFrame(() => {
-								noticeContent.classList.add('show');
+							const noticeContent = document.getElementById('noticeContent');
+							const noticeToggle = document.getElementById('noticeToggle');
+							
+							// 关闭所有打开的二维码
+							document.querySelectorAll('.qr-container.active').forEach(container => {
+								container.classList.remove('active');
 							});
-							noticeToggle.textContent = '隐藏访客订阅∧';
-						} else {
-							noticeContent.classList.remove('show');
-							setTimeout(() => {
-								noticeContent.style.display = 'none';
-							}, 400); // 与过渡时间匹配
-							noticeToggle.textContent = '查看访客订阅∨';
+							
+							if (!noticeContent.classList.contains('show')) {
+								noticeContent.style.display = 'block';
+								requestAnimationFrame(() => {
+									noticeContent.classList.add('show');
+								});
+								noticeToggle.textContent = '收起访客订阅 ∧';
+								noticeToggle.style.background = '#e9ecef';
+							} else {
+								noticeContent.classList.remove('show');
+								noticeToggle.textContent = '查看访客订阅 ∨';
+								noticeToggle.style.background = '#f8f9fa';
+								// 等待动画完成后再隐藏元素
+								setTimeout(() => {
+									if (!noticeContent.classList.contains('show')) {
+										noticeContent.style.display = 'none';
+									}
+								}, 500);
+							}
 						}
-					}
 						
 					if (document.querySelector('.editor')) {
 						let timer;
