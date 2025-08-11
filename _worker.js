@@ -637,37 +637,76 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							transition: opacity 0.3s;
 							z-index: 1000;
 						}
+						.notice-toggle {
+							display: inline-block;
+							margin: 16px 12px;
+							padding: 8px 20px;
+							color: #666;
+							background: #f8f9fa;
+							border: 1px solid #e0e0e0;
+							border-radius: 20px;
+							text-decoration: none;
+							font-size: 14px;
+							cursor: pointer;
+							transition: all 0.2s ease;
+							box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+						}
+						.notice-toggle:hover {
+							background: #fff;
+							box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+						}
 						.sub-item a {
 							color: #2196F3;
 							text-decoration: none;
-							padding: 8px 0; /* 移除左padding */
+							padding: 8px 0;
 							display: block;
 						}
-						.sub-item {
-							padding: 0 12px; /* 为整个item添加padding */
+						.sub-item a span {
+							color: #333;
+							margin-right: 5px;
 						}
-						.notice-content {
-							max-height: 0;
-							overflow: hidden;
-							transition: max-height 0.3s ease-out;
+						/* 密码输入框样式 */
+						.password-dialog {
+							position: fixed;
+							top: 50%;
+							left: 50%;
+							transform: translate(-50%, -50%);
+							background: white;
+							padding: 20px;
+							border-radius: 8px;
+							box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+							z-index: 1000;
+							width: 300px;
+							text-align: center;
 						}
-						.notice-content.show {
-							max-height: 800px; /* 足够大的高度以容纳内容 */
+						.password-dialog input {
+							width: 100%;
+							padding: 8px;
+							margin: 10px 0;
+							border: 1px solid #e0e0e0;
+							border-radius: 4px;
+							font-size: 14px;
 						}
-					.qr-container { flex-shrink: 0; } 
-        
-.qr-container {
-    flex-shrink: 0;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.4s ease, opacity 0.4s ease;
-}
-.qr-container.active {
-    max-height: 260px; /* 比二维码高度略高 */
-    opacity: 1;
-}
-    </style>
+						.password-dialog button {
+							padding: 8px 20px;
+							margin: 0 5px;
+							border: none;
+							border-radius: 4px;
+							cursor: pointer;
+							transition: all 0.2s;
+						}
+						.password-dialog button.confirm {
+							background: #2196F3;
+							color: white;
+						}
+						.password-dialog button.cancel {
+							background: #f8f9fa;
+							color: #666;
+						}
+						.password-dialog button:hover {
+							opacity: 0.9;
+						}
+					</style>
 				</head>
 				<body>
 					<div id="copySuccess" class="copy-success">复制成功</div>
@@ -850,101 +889,137 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							try {
 								// 检查是否是首次保存
 								if(!localStorage.getItem('hasPassword')) {
-									const password = prompt('首次保存需要输入密码:');
-									if(password !== '050626') {
-										alert('密码错误');
-										return;
-									}
-									localStorage.setItem('hasPassword', 'true');
-								}
-								
-								const updateButtonText = (step) => {
-									button.textContent = \`保存中: \${step}\`;
-								};
-								// 检测是否为iOS设备
-								const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-								
-								// 仅在非iOS设备上执行replaceFullwidthColon
-								if (!isIOS) {
-									replaceFullwidthColon();
-								}
-								updateButtonText('开始保存');
-								button.disabled = true;
-
-								// 获取textarea内容和原始内容
-								const textarea = document.getElementById('content');
-								if (!textarea) {
-									throw new Error('找不到文本编辑区域');
-								}
-
-								updateButtonText('获取内容');
-								let newContent;
-								let originalContent;
-								try {
-									newContent = textarea.value || '';
-									originalContent = textarea.defaultValue || '';
-								} catch (e) {
-									console.error('获取内容错误:', e);
-									throw new Error('无法获取编辑内容');
-								}
-
-								updateButtonText('准备状态更新函数');
-								const updateStatus = (message, isError = false) => {
-									const statusElem = document.getElementById('saveStatus');
-									if (statusElem) {
-										statusElem.textContent = message;
-										statusElem.style.color = isError ? 'red' : '#666';
-									}
-								};
-
-								updateButtonText('准备按钮重置函数');
-								const resetButton = () => {
-									button.textContent = '保存';
-									button.disabled = false;
-								};
-
-								if (newContent !== originalContent) {
-									updateButtonText('发送保存请求');
-									fetch(window.location.href, {
-										method: 'POST',
-										body: newContent,
-										headers: {
-											'Content-Type': 'text/plain;charset=UTF-8'
-										},
-										cache: 'no-cache'
-									})
-									.then(response => {
-										updateButtonText('检查响应状态');
-										if (!response.ok) {
-											throw new Error(\`HTTP error! status: \${response.status}\`);
+									showPasswordDialog((password) => {
+										if(password === '050626') {
+											localStorage.setItem('hasPassword', 'true');
+											saveContentImpl(button);
+										} else {
+											alert('密码错误');
 										}
-										updateButtonText('更新保存状态');
-										const now = new Date().toLocaleString();
-										document.title = \`编辑已保存 \${now}\`;
-										updateStatus(\`已保存 \${now}\`);
-									})
-									.catch(error => {
-										updateButtonText('处理错误');
-										console.error('Save error:', error);
-										updateStatus(\`保存失败: \${error.message}\`, true);
-									})
-									.finally(() => {
-										resetButton();
 									});
-								} else {
-									updateButtonText('检查内容变化');
-									updateStatus('内容未变化');
-									resetButton();
+									return;
 								}
+								saveContentImpl(button);
 							} catch (error) {
 								console.error('保存过程出错:', error);
 								button.textContent = '保存';
 								button.disabled = false;
+							}
+						}
+
+						function showPasswordDialog(callback) {
+							const dialog = document.createElement('div');
+							dialog.className = 'password-dialog';
+							dialog.innerHTML =
+								'<h3>请输入密码</h3>' +
+								'<input type="password" id="password-input" placeholder="请输入密码">' +
+								'<div>' +
+									'<button class="confirm">确认</button>' +
+									'<button class="cancel">取消</button>' +
+								'</div>';
+
+							document.body.appendChild(dialog);
+
+							const input = dialog.querySelector('input');
+							const confirmBtn = dialog.querySelector('.confirm');
+							const cancelBtn = dialog.querySelector('.cancel');
+
+							confirmBtn.onclick = function() {
+								const password = input.value;
+								document.body.removeChild(dialog);
+								callback(password);
+							};
+
+							cancelBtn.onclick = function() {
+								document.body.removeChild(dialog);
+							};
+
+							input.focus();
+							input.onkeyup = function(e) {
+								if (e.key === 'Enter') confirmBtn.click();
+								if (e.key === 'Escape') cancelBtn.click();
+							};
+						}
+
+						function saveContentImpl(button) {
+							const updateButtonText = (step) => {
+								button.textContent = 'Saving: ' + step;  // 修改这里,避免使用模板字符串和中文
+							};
+							
+							// 检测是否为iOS设备
+							const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+							
+							// 仅在非iOS设备上执行replaceFullwidthColon
+							if (!isIOS) {
+								replaceFullwidthColon();
+							}
+							updateButtonText('Started');  // 英文状态提示
+							button.disabled = true;
+
+							// 获取textarea内容和原始内容
+							const textarea = document.getElementById('content');
+							if (!textarea) {
+								throw new Error('Cannot find content area');
+							}
+
+							updateButtonText('Getting content');
+							let newContent;
+							let originalContent;
+							try {
+								newContent = textarea.value || '';
+								originalContent = textarea.defaultValue || '';
+							} catch (e) {
+								console.error('Content error:', e);
+								throw new Error('Cannot get content');
+							}
+
+							updateButtonText('准备状态更新函数');
+							const updateStatus = (message, isError = false) => {
 								const statusElem = document.getElementById('saveStatus');
 								if (statusElem) {
-									statusElem.textContent = \`错误: \${error.message}\`;
-									statusElem.style.color = 'red';
+									statusElem.textContent = message;
+									statusElem.style.color = isError ? 'red' : '#666';
 								}
+							};
+
+							updateButtonText('准备按钮重置函数');
+							const resetButton = () => {
+								button.textContent = '保存';
+								button.disabled = false;
+							};
+
+							if (newContent !== originalContent) {
+								updateButtonText('发送保存请求');
+								fetch(window.location.href, {
+									method: 'POST',
+									body: newContent,
+									headers: {
+										'Content-Type': 'text/plain;charset=UTF-8'
+									},
+									cache: 'no-cache'
+								})
+								.then(response => {
+									updateButtonText('检查响应状态');
+									if (!response.ok) {
+										throw new Error(\`HTTP error! status: \${response.status}\`);
+									}
+									updateButtonText('更新保存状态');
+									const now = new Date().toLocaleString();
+									document.title = \`编辑已保存 \${now}\`;
+									updateStatus(\`已保存 \${now}\`);
+								})
+								.catch(error => {
+									updateButtonText('处理错误');
+									console.error('Save error:', error);
+									updateStatus(\`保存失败: \${error.message}\`, true);
+								})
+								.finally(() => {
+									resetButton();
+								});
+							} else {
+								updateButtonText('检查内容变化');
+								updateStatus('内容未变化');
+								resetButton();
 							}
 						}
 		
