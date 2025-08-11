@@ -1007,6 +1007,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						
 					if (document.querySelector('.editor')) {
 						let timer;
+						let saving = false;  // 添加保存状态标志
 						const textarea = document.getElementById('content');
 						const originalContent = textarea.value;
 		
@@ -1022,6 +1023,9 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						}
 						
 						function saveContent(button) {
+							if (saving) return; // 如果正在保存，直接返回
+							saving = true;
+							
 							try {
 								// 检查是否是首次保存
 								if(!localStorage.getItem('hasPassword')) {
@@ -1031,6 +1035,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 											saveContentImpl(button);
 										} else {
 											alert('密码错误');
+											saving = false;
 										}
 									});
 									return;
@@ -1040,6 +1045,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 								console.error('保存过程出错:', error);
 								button.textContent = '保存';
 								button.disabled = false;
+								saving = false;
 							}
 						}
 
@@ -1160,6 +1166,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 								})
 								.finally(() => {
 									resetButton();
+									saving = false;  // 重置保存状态
 								});
 							} else {
 								updateButtonText('检查内容变化');
@@ -1168,10 +1175,10 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							}
 						}
 		
-						textarea.addEventListener('blur', saveContent);
+						// 只保留自动保存的事件监听
 						textarea.addEventListener('input', () => {
 							clearTimeout(timer);
-							timer = setTimeout(saveContent, 5000);
+							timer = setTimeout(() => saveContent(), 5000);
 						});
 					}
 
