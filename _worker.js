@@ -701,18 +701,17 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							background: #cccccc;
 							cursor: not-allowed;
 						}
-						.sub-item {
-							width: 100%;
-							box-sizing: border-box;
-						}
 						.sub-item a {
 							color: #2196F3;
 							text-decoration: none;
-							padding: 10px 0;
+							padding: 10px 0; /* 增加点击区域 */
 							display: block;
-							font-size: 15px;
-							text-align: left; /* 左对齐 */
-							width: 100%;
+							font-size: 15px; /* 增大字体 */
+						}
+						.sub-item a span {
+							color: #333;
+							margin-right: 8px;
+							font-weight: 500;
 						}
 						.save-container {
 							text-align: center;
