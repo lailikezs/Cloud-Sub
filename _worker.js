@@ -277,37 +277,6 @@ async function nginx() {
     max-height: 260px; /* 比二维码高度略高 */
     opacity: 1;
 }
-    
-.sub-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.sub-item a {
-    display: inline-block;
-    min-width: 320px; /* 根据二维码宽度调整 */
-}
-.qr-container {
-    flex-shrink: 0;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.4s ease, opacity 0.4s ease;
-}
-.qr-container.active {
-    max-height: 260px;
-    opacity: 1;
-}
-.notice-content {
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.4s ease, opacity 0.4s ease;
-}
-.notice-content.active {
-    max-height: 2000px; /* 足够大确保内容完全展开 */
-    opacity: 1;
-}
     </style>
 	</head>
 <body>
@@ -708,37 +677,6 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
     max-height: 260px; /* 比二维码高度略高 */
     opacity: 1;
 }
-    
-.sub-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.sub-item a {
-    display: inline-block;
-    min-width: 320px; /* 根据二维码宽度调整 */
-}
-.qr-container {
-    flex-shrink: 0;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.4s ease, opacity 0.4s ease;
-}
-.qr-container.active {
-    max-height: 260px;
-    opacity: 1;
-}
-.notice-content {
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.4s ease, opacity 0.4s ease;
-}
-.notice-content.active {
-    max-height: 2000px; /* 足够大确保内容完全展开 */
-    opacity: 1;
-}
     </style>
 				</head>
 				<body>
@@ -1030,11 +968,11 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					function toggleNotice() {
 						const noticeContent = document.getElementById('noticeContent');
 						const noticeToggle = document.getElementById('noticeToggle');
-						if (!noticeContent.classList.contains('active')) {
-							noticeContent.classList.add('active');
+						if (noticeContent.style.display === 'none' || noticeContent.style.display === '') {
+							noticeContent.style.display = 'block';
 							noticeToggle.textContent = '隐藏访客订阅∧';
 						} else {
-							noticeContent.classList.remove('active');
+							noticeContent.style.display = 'none';
 							noticeToggle.textContent = '查看访客订阅∨';
 						}
 					}
