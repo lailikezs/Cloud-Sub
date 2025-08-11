@@ -588,12 +588,20 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							transform: translate(-50%, -50%);
 							background: rgba(0, 0, 0, 0.8);
 							color: white;
-							padding: 10px 20px;
+							padding: 12px 24px;
 							border-radius: 4px;
 							z-index: 1000;
 							opacity: 0;
-							transition: opacity 0.3s;
+							visibility: hidden;
+							transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+							transform: translate(-50%, calc(-50% + 20px));
 							pointer-events: none;
+							font-size: 15px;
+						}
+						.copy-success.show {
+							opacity: 1;
+							visibility: visible;
+							transform: translate(-50%, -50%);
 						}
 						/* 添加密码输入弹窗样式 */
 						.password-dialog {
@@ -916,20 +924,34 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					</div>
 					<script>
 					function showCopySuccess() {
-							const copySuccess = document.getElementById('copySuccess');
-							if (!copySuccess) {
-								const div = document.createElement('div');
-								div.id = 'copySuccess';
-								div.className = 'copy-success';
-								div.textContent = '复制成功';
-								document.body.appendChild(div);
-								setTimeout(() => div.style.opacity = '1', 10);
-								setTimeout(() => {
-									div.style.opacity = '0';
-									setTimeout(() => document.body.removeChild(div), 300);
+						const copySuccess = document.getElementById('copySuccess');
+						if (copySuccess) {
+							clearTimeout(copySuccess.timer);
+							copySuccess.classList.add('show');
+							
+							copySuccess.timer = setTimeout(() => {
+								copySuccess.classList.remove('show');
+							}, 1500);
+						} else {
+							const div = document.createElement('div');
+							div.id = 'copySuccess';
+							div.className = 'copy-success';
+							div.textContent = '复制成功';
+							document.body.appendChild(div);
+							
+							requestAnimationFrame(() => {
+								div.classList.add('show');
+								div.timer = setTimeout(() => {
+									div.classList.remove('show');
+									setTimeout(() => {
+										if (document.body.contains(div)) {
+											document.body.removeChild(div);
+										}
+									}, 300);
 								}, 1500);
-							}
+							});
 						}
+					}
 					
 					function handleSubscription(text, qrcodeId) {
 						// 复制到剪贴板
