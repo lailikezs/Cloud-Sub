@@ -1029,10 +1029,18 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						
 					if (document.querySelector('.editor')) {
 						let timer;
-						let saving = false;  // 添加保存状态标志
+						let saving = false;  // 保存状态标志
 						const textarea = document.getElementById('content');
 						const originalContent = textarea.value;
-		
+
+						// 添加点击事件监听器来重置保存状态
+						document.addEventListener('click', (e) => {
+							// 如果点击的不是保存按钮或文本区域，重置保存状态
+							if (!e.target.matches('.save-btn') && !e.target.matches('.editor')) {
+								saving = false;
+							}
+						});
+
 						function goBack() {
 							const currentUrl = window.location.href;
 							const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
