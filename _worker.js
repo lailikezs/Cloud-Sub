@@ -853,7 +853,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 								<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/${mytoken}?loon', 'qrcode_5')">
 									<span>loon订阅地址:</span> https://${url.hostname}/${mytoken}?loon
 								</a>
-								<div id="qrcode_5" class="qr-container"></div>
+								<div id="qrcode_5" class="qr-container"></div> 
 							</div>
 							
 							<a class="notice-toggle" href="javascript:void(0);" id="noticeToggle" onclick="toggleNotice()">
@@ -863,7 +863,7 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							<div id="noticeContent" class="notice-content" style="display:none">
 								<div class="sub-item">
 									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}','guest_0')">
-										<span>自适应订阅地址:</span> https://${url.hostname}/sub?token=${guest}
+										<span>渣渣文专用订阅地址:</span> https://${url.hostname}/sub?token=${guest}
 									</a>
 									<div id="guest_0" class="qr-container"></div>
 								</div>
