@@ -640,29 +640,19 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						.sub-item a {
 							color: #2196F3;
 							text-decoration: none;
-							padding: 8px 12px;
+							padding: 8px 0; /* 移除左padding */
 							display: block;
 						}
-						.sub-item a span {
-							color: #333; /* 描述文字改为黑色 */
+						.sub-item {
+							padding: 0 12px; /* 为整个item添加padding */
 						}
-						.notice-toggle {
-							display: inline-block;
-							margin: 16px 12px;
-							padding: 6px 16px;
-							color: #fff;
-							background: #2196F3;
-							border: none;
-							border-radius: 4px;
-							text-decoration: none;
-							font-size: 14px;
-							cursor: pointer;
-							transition: all 0.2s ease;
-							box-shadow: 0 2px 4px rgba(33,150,243,0.2);
+						.notice-content {
+							max-height: 0;
+							overflow: hidden;
+							transition: max-height 0.3s ease-out;
 						}
-						.notice-toggle:hover {
-							background: #1976D2;
-							box-shadow: 0 4px 8px rgba(33,150,243,0.3);
+						.notice-content.show {
+							max-height: 800px; /* 足够大的高度以容纳内容 */
 						}
 					.qr-container { flex-shrink: 0; } 
         
@@ -966,21 +956,30 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					}
 
 					function toggleNotice() {
-						const noticeContent = document.getElementById('noticeContent');
-						const noticeToggle = document.getElementById('noticeToggle');
-						if (noticeContent.style.display === 'none' || noticeContent.style.display === '') {
-							noticeContent.style.display = 'block';
-							noticeToggle.textContent = '隐藏访客订阅∧';
-						} else {
-							noticeContent.style.display = 'none';
-							noticeToggle.textContent = '查看访客订阅∨';
+							const noticeContent = document.getElementById('noticeContent');
+							const noticeToggle = document.getElementById('noticeToggle');
+							if (!noticeContent.classList.contains('show')) {
+								noticeContent.style.display = 'block';
+								// 使用setTimeout确保display生效后再添加show类
+								setTimeout(() => {
+									noticeContent.classList.add('show');
+								}, 10);
+								noticeToggle.textContent = '隐藏访客订阅∧';
+							} else {
+								noticeContent.classList.remove('show');
+								// 等待动画完成后再隐藏元素
+								setTimeout(() => {
+									noticeContent.style.display = 'none';
+								}, 300);
+								noticeToggle.textContent = '查看访客订阅∨';
+							}
 						}
-					}
-			
-					// 初始化 noticeContent 的 display 属性
-					document.addEventListener('DOMContentLoaded', () => {
-						document.getElementById('noticeContent').style.display = 'none';
-					});
+						
+						// 初始化 noticeContent 的样式
+						document.addEventListener('DOMContentLoaded', () => {
+							const noticeContent = document.getElementById('noticeContent');
+							noticeContent.style.display = 'none';
+						});
 					</script>
 				</body>
 			</html>
