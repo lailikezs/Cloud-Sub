@@ -586,54 +586,43 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							top: 50%;
 							left: 50%;
 							transform: translate(-50%, -50%);
-							background: rgba(0, 0, 0, 0.8);
-							color: white;
-							padding: 10px 20px;
-							border-radius: 4px;
+							background: rgba(33, 150, 243, 0.95);
+							color: #fff;
+							padding: 14px 32px;
+							border-radius: 10px;
 							z-index: 1000;
 							opacity: 0;
-							transition: opacity 0.3s;
+							transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
 							pointer-events: none;
+							font-size: 17px;
+							font-weight: 600;
+							box-shadow: 0 6px 24px rgba(33,150,243,0.18);
 						}
-						/* 添加密码输入弹窗样式 */
-						.password-dialog {
-							position: fixed;
-							top: 50%;
-							left: 50%;
-							transform: translate(-50%, -50%);
-							background: white;
-							padding: 20px;
+						.copy-success.show {
+							opacity: 1;
+							transform: translate(-50%, -60%);
+						}
+						/* 优化访客订阅按钮左对齐 */
+						.notice-toggle {
+							display: block;
+							text-align: left;
+							padding: 12px 20px;
+							margin: 20px 0 0 0;
+							background: #f8f9fa;
+							border: 2px solid #e9ecef;
 							border-radius: 8px;
-							box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-							z-index: 1000;
-							text-align: center;
+							color: #2196F3;
+							font-size: 16px;
+							font-weight: 500;
+							text-decoration: none;
+							transition: background 0.3s, box-shadow 0.3s;
+							cursor: pointer;
+							width: 100%;
+							box-sizing: border-box;
 						}
-						.password-dialog h3 {
-							margin: 0 0 15px;
-							color: #333;
-						}
-						.password-dialog input {
-							width: 200px;
-							padding: 8px 12px;
-							border: 1px solid #ddd;
-							border-radius: 4px;
-							margin-bottom: 15px;
-							font-size: 14px;
-						}
-						.password-dialog input:focus {
-							border-color: #4CAF50;
-							outline: none;
-							box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-						}
-						/* 给对话框添加遮罩层 */
-						.dialog-overlay {
-							position: fixed;
-							top: 0;
-							left: 0;
-							right: 0;
-							bottom: 0;
-							background: rgba(0, 0, 0, 0.5);
-							z-index: 999;
+						.notice-toggle:hover {
+							background: #e9ecef;
+							box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 						}
 						.container {
 							width: 92%;
@@ -916,20 +905,19 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					</div>
 					<script>
 					function showCopySuccess() {
-							const copySuccess = document.getElementById('copySuccess');
-							if (!copySuccess) {
-								const div = document.createElement('div');
-								div.id = 'copySuccess';
-								div.className = 'copy-success';
-								div.textContent = '复制成功';
-								document.body.appendChild(div);
-								setTimeout(() => div.style.opacity = '1', 10);
-								setTimeout(() => {
-									div.style.opacity = '0';
-									setTimeout(() => document.body.removeChild(div), 300);
-								}, 1500);
-							}
+						let copySuccess = document.getElementById('copySuccess');
+						if (!copySuccess) {
+							copySuccess = document.createElement('div');
+							copySuccess.id = 'copySuccess';
+							copySuccess.className = 'copy-success';
+							copySuccess.textContent = '复制成功';
+							document.body.appendChild(copySuccess);
 						}
+						copySuccess.classList.add('show');
+						setTimeout(() => {
+							copySuccess.classList.remove('show');
+						}, 1200);
+					}
 					
 					function handleSubscription(text, qrcodeId) {
 						// 复制到剪贴板
@@ -976,35 +964,27 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					}
 
 					function toggleNotice() {
-							const noticeContent = document.getElementById('noticeContent');
-							const noticeToggle = document.getElementById('noticeToggle');
-							
-							// 关闭所有打开的二维码
-							document.querySelectorAll('.qr-container.active').forEach(container => {
-								container.classList.remove('active');
-							});
-							
-							if (!noticeContent.classList.contains('show')) {
-								// 展开动画
-								noticeContent.style.display = 'block';
-								requestAnimationFrame(() => {
-									noticeContent.classList.add('show');
-									noticeToggle.style.background = '#e9ecef';
-									noticeToggle.textContent = '收起访客订阅 ∧';
-								});
-							} else {
-								// 收起动画
-								noticeContent.classList.remove('show');
-								noticeToggle.style.background = '#f8f9fa';
-								noticeToggle.textContent = '查看访客订阅 ∨';
-								setTimeout(() => {
-									if (!noticeContent.classList.contains('show')) {
-										noticeContent.style.display = 'none';
-									}
-								}, 600); // 与 CSS transition 时间匹配
-							}
+						const noticeContent = document.getElementById('noticeContent');
+						const noticeToggle = document.getElementById('noticeToggle');
+						// 关闭所有打开的二维码
+						document.querySelectorAll('.qr-container.active').forEach(container => {
+							container.classList.remove('active');
+						});
+						if (!noticeContent.classList.contains('show')) {
+							noticeContent.style.display = 'block';
+							setTimeout(() => {
+								noticeContent.classList.add('show');
+							}, 10);
+							noticeToggle.textContent = '隐藏访客订阅∧';
+						} else {
+							noticeContent.classList.remove('show');
+							setTimeout(() => {
+								noticeContent.style.display = 'none';
+							}, 400);
+							noticeToggle.textContent = '查看访客订阅∨';
 						}
-						
+					}
+					
 					if (document.querySelector('.editor')) {
 						let timer;
 						const textarea = document.getElementById('content');
@@ -1176,30 +1156,30 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 					}
 
 					function toggleNotice() {
-							const noticeContent = document.getElementById('noticeContent');
-							const noticeToggle = document.getElementById('noticeToggle');
-							if (!noticeContent.classList.contains('show')) {
-								noticeContent.style.display = 'block';
-								// 使用setTimeout确保display生效后再添加show类
-								setTimeout(() => {
-									noticeContent.classList.add('show');
-								}, 10);
-								noticeToggle.textContent = '隐藏访客订阅∧';
-							} else {
-								noticeContent.classList.remove('show');
-								// 等待动画完成后再隐藏元素
-								setTimeout(() => {
-									noticeContent.style.display = 'none';
-								}, 400); // 与过渡时间匹配
-								noticeToggle.textContent = '查看访客订阅∨';
-							}
+						const noticeContent = document.getElementById('noticeContent');
+						const noticeToggle = document.getElementById('noticeToggle');
+						if (!noticeContent.classList.contains('show')) {
+							noticeContent.style.display = 'block';
+							// 使用setTimeout确保display生效后再添加show类
+							setTimeout(() => {
+								noticeContent.classList.add('show');
+							}, 10);
+							noticeToggle.textContent = '隐藏访客订阅∧';
+						} else {
+							noticeContent.classList.remove('show');
+							// 等待动画完成后再隐藏元素
+							setTimeout(() => {
+								noticeContent.style.display = 'none';
+							}, 400); // 与过渡时间匹配
+							noticeToggle.textContent = '查看访客订阅∨';
 						}
+					}
 						
-						// 初始化 noticeContent 的样式
-						document.addEventListener('DOMContentLoaded', () => {
-							const noticeContent = document.getElementById('noticeContent');
-							noticeContent.style.display = 'none';
-						});
+					// 初始化 noticeContent 的样式
+					document.addEventListener('DOMContentLoaded', () => {
+						const noticeContent = document.getElementById('noticeContent');
+						noticeContent.style.display = 'none';
+					});
 					</script>
 				</body>
 			</html>
