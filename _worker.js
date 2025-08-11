@@ -5,7 +5,7 @@ let guestToken = ''; //可以随便取，或者uuid生成，https://1024tools.co
 let BotToken = ''; //可以为空，或者@BotFather中输入/start，/newbot，并关注机器人
 let ChatID = ''; //可以为空，或者@userinfobot中获取，/start
 let TG = 0; //小白勿动， 开发者专用，1 为推送所有的访问信息，0 为不推送订阅转换后端的访问信息与异常访问
-let FileName = 'CF-Workers-SUB';
+let FileName = 'SuFu SUB';
 let SUBUpdateTime = 6; //自定义订阅更新时间，单位小时
 let total = 99;//TB
 let timestamp = 4102329600000;//2099-12-31
@@ -709,42 +709,42 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 							<div id="noticeContent" class="notice-content" style="display:none">
 								<div class="sub-item">
 									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}','guest_0')">
-										自适应订阅地址: https://${url.hostname}/sub?token=${guest}
+										<span>自适应订阅地址:</span> https://${url.hostname}/sub?token=${guest}
 									</a>
 									<div id="guest_0" class="qr-container"></div>
 								</div>
 								
 								<div class="sub-item">
 									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&b64','guest_1')">
-										Base64订阅地址: https://${url.hostname}/sub?token=${guest}&b64
+										<span>Base64订阅地址:</span> https://${url.hostname}/sub?token=${guest}&b64
 									</a>
 									<div id="guest_1" class="qr-container"></div>
 								</div>
 								
 								<div class="sub-item">
 									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&clash','guest_2')">
-										clash订阅地址: https://${url.hostname}/sub?token=${guest}&clash
+										<span>clash订阅地址:</span> https://${url.hostname}/sub?token=${guest}&clash
 									</a>
 									<div id="guest_2" class="qr-container"></div>
 								</div>
 								
 								<div class="sub-item">
 									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&sb','guest_3')">
-										singbox订阅地址: https://${url.hostname}/sub?token=${guest}&sb
+										<span>singbox订阅地址:</span> https://${url.hostname}/sub?token=${guest}&sb
 									</a>
 									<div id="guest_3" class="qr-container"></div>
 								</div>
 								
 								<div class="sub-item">
 									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&surge','guest_4')">
-										surge订阅地址: https://${url.hostname}/sub?token=${guest}&surge
+										<span>surge订阅地址:</span> https://${url.hostname}/sub?token=${guest}&surge
 									</a>
 									<div id="guest_4" class="qr-container"></div>
 								</div>
 								
 								<div class="sub-item">
 									<a href="javascript:void(0)" onclick="handleSubscription('https://${url.hostname}/sub?token=${guest}&loon','guest_5')">
-										loon订阅地址: https://${url.hostname}/sub?token=${guest}&loon
+										<span>loon订阅地址:</span> https://${url.hostname}/sub?token=${guest}&loon
 									</a>
 									<div id="guest_5" class="qr-container"></div>
 								</div>
@@ -832,6 +832,16 @@ async function KV(request, env, txt = 'ADD.txt', guest) {
 						
 						function saveContent(button) {
 							try {
+								// 检查是否是首次保存
+								if(!localStorage.getItem('hasPassword')) {
+									const password = prompt('首次保存需要输入密码:');
+									if(password !== '050626') {
+										alert('密码错误');
+										return;
+									}
+									localStorage.setItem('hasPassword', 'true');
+								}
+								
 								const updateButtonText = (step) => {
 									button.textContent = \`保存中: \${step}\`;
 								};
